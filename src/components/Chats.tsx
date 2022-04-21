@@ -155,7 +155,7 @@ const Chats = (props: { currentChat: any; socket: any }) => {
                           {message.message}
                         </p>
                       </div>
-                      <div className="ml-5">
+                      <div className="ml-1">
                         <h4 className="text-gray-500 text-xs">
                           {message.time}
                         </h4>
@@ -167,7 +167,7 @@ const Chats = (props: { currentChat: any; socket: any }) => {
             </div>
           </div>
 
-          <div className="mt-6 text-white">
+          <div className="mt-4 text-white">
             <form
               onSubmit={(e) => handleSendMsg(e, msg)}
               action=""

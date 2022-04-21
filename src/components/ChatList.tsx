@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { logoutRoute } from "../utils/APIRoutes";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import LogoutIcon from "../assets/switch.png";
 
 const ChatList = (props: {
   contacts: any;
@@ -39,10 +40,37 @@ const ChatList = (props: {
     <div>
       <div className="px-8 py-1 bg-bg_screen overflow-hidden">
         <div className="p-8 bg-bg_screen  font-workSans rounded-modalRadius shadow-card_shadow h-[97vh] mt-3">
+          <div className="flex flex-col w-full overflow-y-auto h-24">
+            <div>
+              <div className="flex items-center justify-between min-h-chatList">
+                <div className="bg-white min-w-circle h-12 rounded-full flex justify-center items-center border-2 border-blue-500 p-1">
+                  <img
+                    className="rounded-full bg-lime-200"
+                    src={`data:image/svg+xml;base64,${
+                      JSON.parse(currentUser)?.avatarImage
+                    }`}
+                    alt="avatar"
+                  />
+                </div>
+                <div className="text-white">
+                  <h3 className="font-semibold text-2xl py-5 text-indigo-500">
+                    {JSON.parse(currentUser)?.username}
+                  </h3>
+                </div>
+                <div>
+                  <img
+                    src={LogoutIcon}
+                    alt="Logout"
+                    width={25}
+                    height={25}
+                    onClick={handleLogout}
+                    className="cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="flex flex-col justify-center items-center">
-            <h3 className="font-semibold text-2xl py-5 text-indigo-500">
-              Message
-            </h3>
             <form
               action=""
               className="w-full flex flex-col justify-center items-center"
@@ -109,7 +137,7 @@ const ChatList = (props: {
                 ({filterContacts.length})
               </span>
             </h3>
-            <div className="flex flex-col w-full overflow-y-auto h-[50vh]">
+            <div className="flex flex-col w-full overflow-y-auto h-[43vh]">
               {filterContacts
                 .filter((contact) => {
                   if (contact.username.includes(search)) {
@@ -140,34 +168,6 @@ const ChatList = (props: {
                     </div>
                   </div>
                 ))}
-            </div>
-            <div className="flex flex-col w-full overflow-y-auto h-24">
-              <div>
-                <div className="flex items-center justify-between min-h-chatList">
-                  <div className="bg-white min-w-circle h-12 rounded-full flex justify-center items-center border-2 border-blue-500 p-1">
-                    <img
-                      className="rounded-full bg-lime-200"
-                      src={`data:image/svg+xml;base64,${
-                        JSON.parse(currentUser)?.avatarImage
-                      }`}
-                      alt="avatar"
-                    />
-                  </div>
-                  <div className="text-white">
-                    <h1 className="text-sm font-bold">
-                      {JSON.parse(currentUser)?.username}
-                    </h1>
-                  </div>
-                  <div>
-                    <button
-                      className=" text-white font-bold text-sm"
-                      onClick={handleLogout}
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
