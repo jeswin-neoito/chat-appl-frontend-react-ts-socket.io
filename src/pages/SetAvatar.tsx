@@ -71,15 +71,14 @@ export default function SetAvatar() {
           <img src={loader} alt="loader" />
         </div>
       ) : (
-        <div>
-          <div className="bg-bg_screen h-screen flex items-center justify-center gap-12">
-            <h1 className="text-white">
+        <div className="bg-bg_screen h-screen flex flex-col items-center justify-center gap-12">
+          <div>
+            <h1 className="text-white text-2xl font-bold">
               Pick an Avatar as your profile picture
             </h1>
           </div>
-          <div className="flex gap-8">
+          <div className="flex">
             {avatars.map((avatar: any, index: any) => {
-              console.log(avatar, "...........");
               return (
                 <div
                   className={`p-2 rounded-full flex justify-center items-center ${
@@ -99,7 +98,7 @@ export default function SetAvatar() {
           </div>
           <button
             onClick={setProfilePicture}
-            className="bg-bg_button shadow-button_shadow hover:shadow-button_shadow_hover text-indigo-500 uppercase"
+            className="bg-bg_button shadow-button_shadow hover:shadow-button_shadow_hover text-indigo-500 uppercase px-9 py-4 rounded-lg"
           >
             Set as Profile Picture
           </button>
