@@ -2,6 +2,9 @@ module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}"],
   theme: {
     extend: {
+      height: {
+        cardHeight: "90vh",
+      },
       colors: {
         bg_screen: "#1f1f1f",
         bg_button: "#262626",
@@ -22,17 +25,17 @@ module.exports = {
       },
       height: {
         128: "28.5rem",
-        chatBody: "41.5rem",
+        chatBody: "31.5rem",
       },
       minWidth: {
-        circle: "5rem",
+        circle: "3rem",
       },
       maxWidth: {
         activeUsersRow: "50rem",
       },
       minHeight: {
         circle: "5rem",
-        chatList: "7rem",
+        chatList: "4rem",
       },
       borderRadius: {
         modalRadius: "3.5rem",

@@ -91,10 +91,10 @@ const Chats = (props: { currentChat: any; socket: any }) => {
   return (
     <div>
       <div className="pl-4 pr-8 py-2 bg-bg_screen">
-        <div className="p-8 bg-bg_screen shadow-card_shadow font-workSans rounded-modalRadius ">
-          <div className="flex flex-col justify-center bg-bg_button  rounded-xl shadow-input_shadow mb-6">
+        <div className="p-8 bg-bg_screen shadow-card_shadow font-workSans rounded-modalRadius  h-[97vh] mb-5">
+          <div className="flex flex-col justify-center bg-bg_button  rounded-xl shadow-button_shadow mb-6">
             <div className="flex mx-4  rounded-3xl items-center text-gray-700">
-              <div className="bg-white ml-4 w-16 h-16 rounded-full flex justify-center items-center border-2 border-green-500 p-1">
+              <div className="bg-white ml-4 w-12 h-12 rounded-full flex justify-center items-center border-2 border-green-500 p-1">
                 <img
                   className="rounded-full bg-blue-100"
                   src={`data:image/svg+xml;base64,${props.currentChat?.avatarImage}`}
@@ -102,10 +102,10 @@ const Chats = (props: { currentChat: any; socket: any }) => {
                 />
               </div>
               <div className="p-5">
-                <h4 className="text-2xl text-white">
+                <h4 className="text-xl text-white">
                   {props.currentChat?.username}
                 </h4>
-                <p className="text-green-600 ">Online</p>
+                <p className="text-green-600 text-xs">Online</p>
               </div>
             </div>
           </div>
@@ -114,18 +114,14 @@ const Chats = (props: { currentChat: any; socket: any }) => {
             <div className="mt-4">
               {messages.map((message: any) => (
                 <div key={uuidv4()} ref={scrollRef}>
-                  <div className="mb-6">
+                  <div className="mb-3">
                     <div
                       className={`flex mx-4 items-end ${
                         message.fromSelf ? "flex-row-reverse mx-4 mb-5" : "mb-4"
                       }`}
                     >
                       <div
-                        className={`bg-white ml-4 w-12 h-12 rounded-full flex justify-center items-center border-2 p-1 shadow-xl ${
-                          message.fromSelf
-                            ? "border-gray-500"
-                            : "border-blue-500"
-                        }`}
+                        className={`bg-white ml-4 w-8 h-8 rounded-full flex justify-center items-center border-2 m-1 shadow-xl`}
                       >
                         {message.fromSelf ? (
                           <img
@@ -144,12 +140,12 @@ const Chats = (props: { currentChat: any; socket: any }) => {
                         )}
                       </div>
                       <div
-                        className={`rounded-3xl w-[65%] text-lg shadow-xl flex flex-wrap ${
+                        className={`rounded-3xl max-w-[65%] text-sm shadow-button_shadow flex flex-wrap ${
                           message.fromSelf ? "bg-bg_button" : "bg-indigo-400"
                         }`}
                       >
                         <p
-                          className={`ml-4  font-medium p-6 w-[90%] ${
+                          className={`ml-2 mr-2 font-medium p-3 w-[90%] ${
                             message.fromSelf ? "text-white" : "text-white"
                           }`}
                           style={{
@@ -178,7 +174,7 @@ const Chats = (props: { currentChat: any; socket: any }) => {
               className="w-full flex flex-col justify-center items-center"
             >
               <input
-                className="w-[95%] px-8 py-4  rounded-xl  text-xl shadow-input_shadow outline-none bg-bg_button text-white placeholder-white"
+                className="w-[95%] px-5 py-3  rounded-xl  text-sm shadow-input_shadow outline-none bg-bg_button text-white placeholder-white"
                 type="text"
                 placeholder="Type Your Message Here "
                 value={msg}
