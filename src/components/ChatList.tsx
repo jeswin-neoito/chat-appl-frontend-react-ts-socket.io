@@ -67,7 +67,15 @@ const ChatList = (props: {
                     : "ml-2 text-black"
                 }
               >
-                ({props.onlineUsers.length})
+                (
+                {
+                  props.onlineUsers.filter((contact: any) => {
+                    return (
+                      contact.username !== JSON.parse(currentUser).username
+                    );
+                  }).length
+                }
+                )
               </span>
             </h3>
             <div className="flex overflow-x-auto max-w-full">
@@ -128,7 +136,9 @@ const ChatList = (props: {
                         />
                       </div>
                       <div className="p-5">
-                        <h4>{contact.username}</h4>
+                        <h4 className="text-xl font-medium text-white">
+                          {contact.username}
+                        </h4>
                       </div>
                     </div>
                   </div>
