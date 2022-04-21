@@ -1,44 +1,46 @@
 import React, { useEffect, useState } from "react";
+import { logoutRoute } from "../utils/APIRoutes";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
-const ChatList = (props: { contacts: any; changeChat: any }) => {
-  // const activeUsers: number[] = Array.from(Array(20).keys());
-  // const messages: number[] = Array.from(Array(40).keys());
+const ChatList = (props: {
+  contacts: any;
+  changeChat: any;
+  onlineUsers: any;
+}) => {
+  const currentUser: any = localStorage.getItem("chat-app-current-user");
+  const navigate = useNavigate();
 
-  const randomAvatarGenerator = () => {
-    let avatars = `https://avatars.dicebear.com/api/avataaars/${Math.random()}.svg`;
-    return avatars;
+  const [filterContacts, setFilterContacts] = useState<any[]>([]);
+  const [search, setSearch] = useState("");
+  useEffect(() => {
+    setFilterContacts(props.contacts);
+  }, [props.contacts]);
+
+  const handleSearchChange = (e: any) => {
+    setSearch(e.target.value);
   };
 
-  const [currentUserName, setCurrentUserName] = useState<any>(undefined);
-  const [currentUserImage, setCurrentUserImage] = useState(undefined);
   const [currentSelected, setCurrentSelected] = useState(undefined);
-  useEffect(() => {
-    const getData = async () => {
-      const user: any = await localStorage.getItem("chat-app-current-user");
-      const data = JSON.parse(user);
-      setCurrentUserName(data.username);
-      setCurrentUserImage(data.avatarImage);
-    };
-  }, []);
   const changeCurrentChat = (index: any, contact: any) => {
     setCurrentSelected(index);
     props.changeChat(contact);
   };
-
-  //   const randomNameGenerator = () => {
-  //     {
-  //       fetch('https://api.name-fake.com/ukrainian-ukraine/male')
-  //         .then((response) => response.json())
-  //         .then((data) => console.log(data));
-  //     }
-  //   };
-
+  const handleLogout = async () => {
+    const _id: any = localStorage.getItem("chat-app-current-user");
+    const id = JSON.parse(_id).id;
+    const data = await axios.get(`${logoutRoute}/${id}`);
+    if (data.status === 200) {
+      localStorage.clear();
+      navigate("/login");
+    }
+  };
   return (
     <div>
-      <div className="px-12 py-5 bg-slate-200">
-        <div className="p-8 bg-white font-workSans rounded-modalRadius shadow-lg">
+      <div className="px-8 py-1 bg-bg_screen">
+        <div className="p-8 bg-bg_screen  font-workSans rounded-modalRadius shadow-card_shadow">
           <div className="flex flex-col justify-center items-center">
-            <h3 className="font-semibold text-3xl py-11 text-blue-500">
+            <h3 className="font-semibold text-3xl py-11 text-indigo-500">
               Message
             </h3>
             <form
@@ -46,81 +48,119 @@ const ChatList = (props: { contacts: any; changeChat: any }) => {
               className="w-full flex flex-col justify-center items-center"
             >
               <input
-                className="w-[95%] px-8 py-4 rounded rounded-xl bg-gray-100 text-xl font-light shadow-lg outline-none text-gray-700 placeholder-gray-700"
+                className="w-[95%] px-8 py-4 rounded-xl bg-bg_button text-xl font-light shadow-input_shadow outline-none text-gray-700 placeholder-gray-700"
                 type="text"
                 placeholder="Search Your Contacts"
+                value={search}
+                onChange={(e) => handleSearchChange(e)}
               />
             </form>
           </div>
 
           <div className="mt-6 w-[97%]">
-            <h3 className="pl-5 text-2xl mb-3 font-semibold text-blue-500">
+            <h3 className="pl-5 text-2xl mb-3 font-semibold text-indigo-500">
               Active
               <span
                 className={
-                  props.contacts.length > 0
+                  props.onlineUsers.length > 0
                     ? "ml-2 font-medium text-green-600"
                     : "ml-2 text-black"
                 }
               >
-                ({props.contacts.length})
+                ({props.onlineUsers.length})
               </span>
             </h3>
             <div className="flex overflow-x-auto max-w-full">
-              {props.contacts.map((contact: any) => (
-                <div key={contact._id}>
-                  <div className="bg-white min-w-circle h-20 rounded-full flex justify-center items-center shadow-xl border-2 border-green-500 p-1 mx-3">
-                    <img
-                      className="rounded-full bg-blue-100"
-                      src={randomAvatarGenerator()}
-                      alt=""
-                    />
+              {props.onlineUsers
+                .filter((contact: any) => {
+                  return contact.username !== JSON.parse(currentUser).username;
+                })
+                .map((contact: any) => (
+                  <div key={contact._id}>
+                    <div className="bg-bg_card min-w-circle h-20 rounded-full flex justify-center items-center shadow-xl border-2 border-green-500 p-1 mx-3">
+                      <img
+                        className="rounded-full bg-blue-100"
+                        src={`data:image/svg+xml;base64,${contact?.avatarImage}`}
+                        alt=""
+                      />
+                    </div>
+
+                    <p className="text-xs ml-8">{contact.username}</p>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </div>
 
           <div className="mt-6">
-            <h3 className="pl-5 text-2xl mb-3 font-semibold text-blue-500">
-              Messages
+            <h3 className="pl-5 text-2xl mb-3 font-semibold text-indigo-500">
+              Contacts
               <span
                 className={
-                  props.contacts.length > 0
-                    ? "ml-2 font-medium text-blue-500"
+                  filterContacts.length > 0
+                    ? "ml-2 font-medium text-green-500"
                     : "ml-2 text-black"
                 }
               >
-                ({props.contacts.length})
+                ({filterContacts.length})
               </span>
             </h3>
             <div className="flex flex-col w-full overflow-y-auto h-128">
-              {props.contacts.map((contact: any, index: any) => (
-                <div
-                  key={contact._id}
-                  className={`contact ${
-                    index === currentSelected ? "selected" : ""
-                  }`}
-                  onClick={() => changeCurrentChat(index, contact)}
-                >
-                  <div className="flex bg-blue-200 mx-4 rounded rounded-3xl items-center mb-4 shadow-lg min-h-chatList">
-                    <div className="bg-white ml-4 min-w-circle h-20 rounded-full flex justify-center items-center border-2 border-blue-500 p-1">
-                      <img
-                        className="rounded-full bg-lime-200"
-                        src={randomAvatarGenerator()}
-                        alt="avatar"
-                      />
-                    </div>
-                    <div className="p-5">
-                      <h4>{contact.username}</h4>
-                      {/* <p className="font-light">
-                        Lorem ipsum, dolor sit amet consectetur adipisicing
-                        elit.
-                      </p> */}
+              {filterContacts
+                .filter((contact) => {
+                  if (contact.username.includes(search)) {
+                    return true;
+                  }
+                })
+                .map((contact: any, index: any) => (
+                  <div
+                    key={contact._id}
+                    className={`contact ${
+                      index === currentSelected ? "selected" : ""
+                    }`}
+                    onClick={() => changeCurrentChat(index, contact)}
+                  >
+                    <div className="flex bg-indigo-500 shadow-card_shadow mx-4 rounded-3xl items-center mb-4 min-h-chatList">
+                      <div className="bg-white ml-4 min-w-circle h-20 rounded-full flex justify-center items-center border-2 border-blue-500 p-1">
+                        <img
+                          className="rounded-full bg-lime-200"
+                          src={`data:image/svg+xml;base64,${contact?.avatarImage}`}
+                          alt="avatar"
+                        />
+                      </div>
+                      <div className="p-5">
+                        <h4>{contact.username}</h4>
+                      </div>
                     </div>
                   </div>
+                ))}
+            </div>
+            <div className="flex flex-col w-full overflow-y-auto h-24">
+              <div>
+                <div className="flex items-center justify-between min-h-chatList">
+                  <div className="bg-white min-w-circle h-20 rounded-full flex justify-center items-center border-2 border-blue-500 p-1">
+                    <img
+                      className="rounded-full bg-lime-200"
+                      src={`data:image/svg+xml;base64,${
+                        JSON.parse(currentUser)?.avatarImage
+                      }`}
+                      alt="avatar"
+                    />
+                  </div>
+                  <div className="text-white">
+                    <h1 className="text-lg font-bold">
+                      {JSON.parse(currentUser)?.username}
+                    </h1>
+                  </div>
+                  <div>
+                    <button
+                      className=" text-white font-bold"
+                      onClick={handleLogout}
+                    >
+                      Logout
+                    </button>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>

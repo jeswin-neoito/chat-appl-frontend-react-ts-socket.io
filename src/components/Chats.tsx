@@ -4,6 +4,7 @@ import { sendMessageRoute, recieveMessageRoute } from "../utils/APIRoutes";
 import { v4 as uuidv4 } from "uuid";
 
 const Chats = (props: { currentChat: any; socket: any }) => {
+  const currentUser: any = localStorage.getItem("chat-app-current-user");
   const [messages, setMessages] = useState<any>([]);
   const scrollRef: any = useRef();
   const [arrivalMessage, setArrivalMessage] = useState<any>(null);
@@ -12,14 +13,13 @@ const Chats = (props: { currentChat: any; socket: any }) => {
 
   useEffect(() => {
     const getData = async () => {
-      const user: any = await localStorage.getItem("chat-app-current-user");
+      const user: any = localStorage.getItem("chat-app-current-user");
       const data = JSON.parse(user);
       const response = await axios.post(recieveMessageRoute, {
         from: data._id,
         to: props.currentChat?._id,
       });
       setMessages(response.data);
-      console.log(">>>>__________________", response.data);
     };
     getData();
   }, [props.currentChat]);
@@ -83,26 +83,28 @@ const Chats = (props: { currentChat: any; socket: any }) => {
     scrollRef?.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const randomAvatarGenerator = () => {
-    let avatars = `https://avatars.dicebear.com/api/avataaars/${Math.random()}.svg`;
-    return avatars;
-  };
+  // const randomAvatarGenerator = () => {
+  //   let avatars = `https://avatars.dicebear.com/api/avataaars/${Math.random()}.svg`;
+  //   return avatars;
+  // };
 
   return (
     <div>
-      <div className="pl-4 pr-12 py-5 bg-slate-200">
-        <div className="p-8 bg-white font-workSans rounded-modalRadius shadow-lg">
-          <div className="flex flex-col justify-center bg-green-100  rounded-modalRadius mb-6">
-            <div className="flex mx-4 rounded rounded-3xl items-center text-gray-700">
+      <div className="pl-4 pr-8 py-2 bg-bg_screen">
+        <div className="p-8 bg-bg_screen shadow-card_shadow font-workSans rounded-modalRadius ">
+          <div className="flex flex-col justify-center bg-bg_button  rounded-xl shadow-input_shadow mb-6">
+            <div className="flex mx-4  rounded-3xl items-center text-gray-700">
               <div className="bg-white ml-4 w-16 h-16 rounded-full flex justify-center items-center border-2 border-green-500 p-1">
                 <img
                   className="rounded-full bg-blue-100"
-                  src={randomAvatarGenerator()}
+                  src={`data:image/svg+xml;base64,${props.currentChat?.avatarImage}`}
                   alt="avatar"
                 />
               </div>
               <div className="p-5">
-                <h4 className="text-2xl">{props.currentChat?.username}</h4>
+                <h4 className="text-2xl text-white">
+                  {props.currentChat?.username}
+                </h4>
                 <p className="text-green-600 ">Online</p>
               </div>
             </div>
@@ -125,27 +127,40 @@ const Chats = (props: { currentChat: any; socket: any }) => {
                             : "border-blue-500"
                         }`}
                       >
-                        <img
-                          className="rounded-full bg-blue-100"
-                          src={randomAvatarGenerator()}
-                          alt="avatar"
-                        />
+                        {message.fromSelf ? (
+                          <img
+                            className="rounded-full bg-blue-100"
+                            src={`data:image/svg+xml;base64,${
+                              JSON.parse(currentUser)?.avatarImage
+                            }`}
+                            alt="avatar"
+                          />
+                        ) : (
+                          <img
+                            className="rounded-full bg-blue-100"
+                            src={`data:image/svg+xml;base64,${props.currentChat?.avatarImage}`}
+                            alt="avatar"
+                          />
+                        )}
                       </div>
                       <div
-                        className={` rounded-full w-[65%] text-lg shadow-xl ${
-                          message.fromSelf ? "bg-gray-300" : "bg-blue-400"
+                        className={`rounded-3xl w-[65%] text-lg shadow-xl flex flex-wrap ${
+                          message.fromSelf ? "bg-bg_button" : "bg-indigo-400"
                         }`}
                       >
                         <p
-                          className={`ml-5  font-medium p-6 ${
-                            message.fromSelf ? "" : "text-white"
+                          className={`ml-4  font-medium p-6 w-[90%] ${
+                            message.fromSelf ? "text-white" : "text-white"
                           }`}
+                          style={{
+                            overflowWrap: "break-word",
+                          }}
                         >
                           {message.message}
                         </p>
                       </div>
                       <div className="ml-5">
-                        <h4 className="text-gray-700 text-xs">
+                        <h4 className="text-gray-500 text-xs">
                           {message.time}
                         </h4>
                       </div>
@@ -163,7 +178,7 @@ const Chats = (props: { currentChat: any; socket: any }) => {
               className="w-full flex flex-col justify-center items-center"
             >
               <input
-                className="w-[95%] px-8 py-4 rounded rounded-xl  text-xl shadow-2xl outline-none bg-violet-600 text-white placeholder-white"
+                className="w-[95%] px-8 py-4  rounded-xl  text-xl shadow-input_shadow outline-none bg-bg_button text-white placeholder-white"
                 type="text"
                 placeholder="Type Your Message Here "
                 value={msg}
