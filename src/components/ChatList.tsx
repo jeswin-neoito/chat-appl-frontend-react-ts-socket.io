@@ -3,34 +3,34 @@ import { logoutRoute } from "../utils/APIRoutes";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import LogoutIcon from "../assets/switch.png";
+import { ChatListProps, User } from "../types/types";
 
-const ChatList = (props: {
-  contacts: any;
-  changeChat: any;
-  onlineUsers: any;
+const ChatList: React.FC<ChatListProps> = ({
+  contacts,
+  changeChat,
+  onlineUsers,
 }) => {
   const currentUser: any = localStorage.getItem("chat-app-current-user");
   const navigate = useNavigate();
 
-  const [filterContacts, setFilterContacts] = useState<any[]>([]);
+  const [filterContacts, setFilterContacts] = useState<User[]>([]);
   const [search, setSearch] = useState("");
   useEffect(() => {
-    setFilterContacts(props.contacts);
-  }, [props.contacts]);
+    setFilterContacts(contacts);
+  }, [contacts]);
 
-  const handleSearchChange = (e: any) => {
-    setSearch(e.target.value);
+  const handleSearchChange = (e: React.FormEvent<HTMLInputElement>) => {
+    setSearch(e.currentTarget.value);
   };
 
-  const [currentSelected, setCurrentSelected] = useState(undefined);
-  const changeCurrentChat = (index: any, contact: any) => {
+  const [currentSelected, setCurrentSelected] = useState<number>();
+  const changeCurrentChat = (index: number, contact: User) => {
     setCurrentSelected(index);
-    props.changeChat(contact);
+    changeChat(contact);
   };
   const handleLogout = async () => {
-    const _id: any = localStorage.getItem("chat-app-current-user");
-    const id = JSON.parse(_id).id;
-    const data = await axios.get(`${logoutRoute}/${id}`);
+    const id: string = JSON.parse(currentUser)?.id;
+    const data = await axios.get<null>(`${logoutRoute}/${id}`);
     if (data.status === 200) {
       localStorage.clear();
       navigate("/login");
@@ -92,7 +92,7 @@ const ChatList = (props: {
               <span className="ml-2 font-medium text-green-600">
                 (
                 {
-                  props.onlineUsers.filter((contact: any) => {
+                  onlineUsers.filter((contact: User) => {
                     return (
                       contact.username !== JSON.parse(currentUser).username
                     );
@@ -102,11 +102,11 @@ const ChatList = (props: {
               </span>
             </h3>
             <div className="flex overflow-x-auto max-w-full">
-              {props.onlineUsers
-                .filter((contact: any) => {
+              {onlineUsers
+                .filter((contact: User) => {
                   return contact.username !== JSON.parse(currentUser).username;
                 })
-                .map((contact: any) => (
+                .map((contact: User) => (
                   <div key={contact._id}>
                     <div className="bg-bg_card min-w-[60px] h-15 rounded-full flex justify-center items-center shadow-xl border-2 border-green-500 p-1 mx-3">
                       <img
@@ -144,7 +144,7 @@ const ChatList = (props: {
                     return true;
                   }
                 })
-                .map((contact: any, index: any) => (
+                .map((contact: User, index: number) => (
                   <div
                     key={contact._id}
                     className={`contact ${

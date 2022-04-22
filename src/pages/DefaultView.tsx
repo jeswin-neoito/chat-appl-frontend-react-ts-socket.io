@@ -1,39 +1,46 @@
-import ChatList from "./ChatList";
-import Chats from "./Chats";
+import ChatList from "../components/ChatList";
+import Chats from "../components/Chats";
 import { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { io } from "socket.io-client";
 import { allUsersRoute, host } from "../utils/APIRoutes";
-import { User } from "../types/types";
-import Welcome from "./Welcome";
+import { User, UserTyping } from "../types/types";
+import Welcome from "../components/Welcome";
 
 const DefaultView = () => {
   const navigate = useNavigate();
-  const socket: any = useRef();
-  const [contacts, setContacts] = useState<any>([]);
-  const [onlineUsers, setOnlineUsers] = useState<any>([]);
-  const [currentChat, setCurrentChat] = useState(undefined);
+  const socket = useRef<any>();
+  const [contacts, setContacts] = useState<User[]>([]);
+  const [onlineUsers, setOnlineUsers] = useState<User[]>([]);
+  const [currentChat, setCurrentChat] = useState<User>();
   const [currentUser, setCurrentUser] = useState<User>();
+  const [typing, setTyping] = useState<UserTyping | undefined>();
 
   useEffect(() => {
-    const getData = async () => {
-      if (!localStorage.getItem("chat-app-current-user")) {
-        navigate("/login");
-      } else {
-        const user: any = localStorage.getItem("chat-app-current-user");
-        setCurrentUser(JSON.parse(user));
-      }
-    };
-    getData();
+    if (!localStorage.getItem("chat-app-current-user")) {
+      navigate("/login");
+    } else {
+      const user: any = localStorage.getItem("chat-app-current-user");
+      setCurrentUser(JSON.parse(user));
+    }
   }, []);
+  useEffect(() => {
+    if (currentUser) {
+      socket.current = io(host);
+      socket.current.on("usertyping", setUserTyping);
+    }
+  }, [currentUser]);
+  const setUserTyping = (data: UserTyping) => {
+    setTyping(data);
+  };
   useEffect(() => {
     if (currentUser) {
       socket.current = io(host);
       socket.current.on("online-users", onlineusers);
     }
   }, [currentUser]);
-  const onlineusers = (users: any) => {
+  const onlineusers = (users: User[]) => {
     setOnlineUsers(users);
   };
   useEffect(() => {
@@ -45,7 +52,7 @@ const DefaultView = () => {
   useEffect(() => {
     const getUser = async () => {
       if (currentUser) {
-        const data: any = await axios.get(
+        const data = await axios.get<User[]>(
           `${allUsersRoute}/${currentUser._id}`
         );
         setContacts(data.data);
@@ -53,7 +60,7 @@ const DefaultView = () => {
     };
     getUser();
   }, [currentUser]);
-  const handleChatChange = (chat: any) => {
+  const handleChatChange = (chat: User) => {
     setCurrentChat(chat);
   };
 
@@ -84,7 +91,12 @@ const DefaultView = () => {
         {currentChat === undefined ? (
           <Welcome />
         ) : (
-          <Chats currentChat={currentChat} socket={socket} />
+          <Chats
+            currentChat={currentChat}
+            socket={socket}
+            typing={typing}
+            onlineUsers={onlineUsers}
+          />
         )}
       </div>
     </div>

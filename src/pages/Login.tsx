@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -21,8 +21,11 @@ export default function Login() {
     }
   }, []);
 
-  const handleChange = (event: any) => {
-    setValues({ ...values, [event.target.name]: event.target.value });
+  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+    setValues({
+      ...values,
+      [event.currentTarget.name]: event.currentTarget.value,
+    });
   };
 
   const validateForm = () => {
@@ -37,7 +40,7 @@ export default function Login() {
     return true;
   };
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (validateForm()) {
       const { username, password } = values;
