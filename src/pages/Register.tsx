@@ -1,6 +1,5 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
-import styled from "styled-components";
 import { useNavigate, Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,8 +27,11 @@ export default function Register() {
     }
   }, []);
 
-  const handleChange = (event: any) => {
-    setValues({ ...values, [event.target.name]: event.target.value });
+  const handleChange = (event: React.FormEvent<HTMLInputElement>) => {
+    setValues({
+      ...values,
+      [event.currentTarget.name]: event.currentTarget.value,
+    });
   };
 
   const handleValidation = () => {
@@ -56,11 +58,10 @@ export default function Register() {
       toast.error("Email is required.", toastOptions);
       return false;
     }
-
     return true;
   };
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (handleValidation()) {
       const { email, username, password } = values;

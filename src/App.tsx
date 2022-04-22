@@ -1,5 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import DefaultView from "./components/DefaultView";
+import DefaultView from "./pages/DefaultView";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import SetAvatar from "./pages/SetAvatar";

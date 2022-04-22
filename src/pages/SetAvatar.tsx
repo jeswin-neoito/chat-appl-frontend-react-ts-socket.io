@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import styled from "styled-components";
 import axios from "axios";
 import { Buffer } from "buffer";
 import loader from "../assets/loader.gif";
@@ -10,11 +9,11 @@ import { setAvatarRoute } from "../utils/APIRoutes";
 
 export default function SetAvatar() {
   global.Buffer = Buffer;
-  const api = `https://api.multiavatar.com/4645646`;
+  const api: string = `https://api.multiavatar.com/4645646`;
   const navigate = useNavigate();
-  const [avatars, setAvatars] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [selectedAvatar, setSelectedAvatar] = useState(undefined);
+  const [avatars, setAvatars] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [selectedAvatar, setSelectedAvatar] = useState<number>();
   const toastOptions: any = {
     position: "bottom-right",
     autoClose: 8000,
@@ -51,7 +50,7 @@ export default function SetAvatar() {
 
   useEffect(() => {
     const getData = async () => {
-      const data: any = [];
+      const data: string[] = [];
       for (let i = 0; i < 4; i++) {
         const image = await axios.get(
           `${api}/${Math.round(Math.random() * 1000)}`
@@ -78,7 +77,7 @@ export default function SetAvatar() {
             </h1>
           </div>
           <div className="flex">
-            {avatars.map((avatar: any, index: any) => {
+            {avatars.map((avatar: string, index: number) => {
               return (
                 <div
                   className={`p-2 rounded-full flex justify-center items-center ${
